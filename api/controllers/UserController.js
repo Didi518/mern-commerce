@@ -3,6 +3,7 @@ const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
 const User = require('../models/userModel');
 const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
 
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -64,7 +65,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
   const resetUrl = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/password/reset/${resetToken}`;
+  )}/api/v1/password-reset/${resetToken}`;
   const message = `La réinitialisation de votre mot de passe se fait ici:\n\n${resetUrl}\n\nSi vous n'avez pas demandé cet email, ignorez-le`;
   try {
     await sendEmail({
@@ -82,4 +83,33 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
     return next(new ErrorHandler(error.message, 500));
   }
+});
+
+exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPassordExprires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(
+      new ErrorHandler(
+        'Réinitialisation du mot de passe échouée: jeton invalide ou expiré',
+        400
+      )
+    );
+  }
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(
+      new ErrorHandler('Les mots de passe ne correspondent pas', 400)
+    );
+  }
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+  sendToken(user, 200, res);
 });
