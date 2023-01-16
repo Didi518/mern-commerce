@@ -11,8 +11,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileupload());
 
 const users = require('./routes/userRoutes');
+const products = require('./routes/productRoutes');
 
 app.use('/api/v1', users);
+app.use('/api/v1', products);
 
 app.use(errorMiddleware);
 

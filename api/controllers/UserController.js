@@ -1,6 +1,6 @@
-const ErrorHandler = require('../utils/errorHandler');
+const errorHandler = require('../utils/errorHandler');
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
-const User = require('../models/userModel');
+const User = require('../models/User');
 const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
@@ -23,7 +23,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return next(
-      new ErrorHandler(
+      new errorHandler(
         "Merci d'entrer une adresse e-mail et un mot de passe",
         400
       )
@@ -31,11 +31,11 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
-    return next(new ErrorHandler('E-mail invalide', 401));
+    return next(new errorHandler('E-mail invalide', 401));
   }
   const isPasswordMatched = await user.comparePassword(password);
   if (!isPasswordMatched) {
-    return next(new ErrorHandler('Mot de passe invalide', 401));
+    return next(new errorHandler('Mot de passe invalide', 401));
   }
   sendToken(user, 200, res);
 });
@@ -53,12 +53,12 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   if (!req.body.email) {
-    return next(new ErrorHandler("Merci d'entrer votre adresse e-mail", 400));
+    return next(new errorHandler("Merci d'entrer votre adresse e-mail", 400));
   }
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(
-      new ErrorHandler('Aucun utilisateur retrouvé avec cet e-mail', 404)
+      new errorHandler('Aucun utilisateur retrouvé avec cet e-mail', 404)
     );
   }
   const resetToken = user.getResetPasswordToken();
@@ -81,7 +81,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(new ErrorHandler(error.message, 500));
+    return next(new errorHandler(error.message, 500));
   }
 });
 
@@ -96,7 +96,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
   });
   if (!user) {
     return next(
-      new ErrorHandler(
+      new errorHandler(
         'Réinitialisation du mot de passe échouée: jeton invalide ou expiré',
         400
       )
@@ -104,7 +104,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
   }
   if (req.body.password !== req.body.confirmPassword) {
     return next(
-      new ErrorHandler('Les mots de passe ne correspondent pas', 400)
+      new errorHandler('Les mots de passe ne correspondent pas', 400)
     );
   }
   user.password = req.body.password;
