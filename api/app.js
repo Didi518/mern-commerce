@@ -12,9 +12,11 @@ app.use(fileupload());
 
 const users = require('./routes/userRoutes');
 const products = require('./routes/productRoutes');
+const orders = require('./routes/orderRoutes');
 
 app.use('/api/v1', users);
 app.use('/api/v1', products);
+app.use('/api/v1', orders);
 
 app.use(errorMiddleware);
 
