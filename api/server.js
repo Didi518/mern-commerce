@@ -1,14 +1,19 @@
 const app = require('./app');
 const connectDatabase = require('./config/database');
 
+let environment = 'developpement';
+if (environment === 'production') {
+  require('dotenv').config({ path: '.env' });
+} else {
+  require('dotenv').config({ path: 'config/config.env' });
+}
+console.log(environment);
+
 process.on('uncaughtException', (err) => {
   console.log(`ERREUR: ${err.stack}`);
   console.log('Fermeture dûe à une exception inconnue');
   process.exit(1);
 });
-
-if (process.env.NODE_ENV !== 'PRODUCTION')
-  require('dotenv').config({ path: 'config/config.env' });
 
 connectDatabase();
 
