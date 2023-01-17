@@ -1,6 +1,6 @@
 import React from 'react';
-import FlashCard from '../../components/flashDeals/FlashCard';
 import { Data } from '../../constants/Data';
+import FlashCard from './FlashCard';
 
 const index = () => {
   return (
@@ -8,10 +8,10 @@ const index = () => {
       <div className="container">
         <div className="heading f_flex">
           <i className="fa fa-bolt" />
-          <h1>Tous les Articles</h1>
+          <h1>Ventes Flash</h1>
         </div>
         <div className="d_flex">
-          {Data.allProducts.map((item) => (
+          {Data.productItems.map((item) => (
             <FlashCard key={item.id} product={item} />
           ))}
         </div>

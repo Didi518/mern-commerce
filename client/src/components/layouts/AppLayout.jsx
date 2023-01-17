@@ -4,7 +4,7 @@ import Cart from '../../pages/cart';
 import Header from '../common/Header';
 import Home from '../../pages/home';
 import Products from '../../pages/products';
-import Login from '../../pages/auth/login';
+import Login from '../../pages/auth/Login';
 import Register from '../../pages/auth/Register';
 import NotFound from '../../pages/notFound';
 

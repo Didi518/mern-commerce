@@ -1,0 +1,56 @@
+.flash {
+  background: #f6f9fc;
+  padding: 50px 0;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  width: 317px;
+}
+
+.product {
+  background: #fff;
+  padding: 20px;
+  position: relative;
+  border-radius: 8px;
+  margin: 10px;
+  box-shadow: rgb(3 0 71 / 9%) 0px 1px 3px;
+  img {
+    width: 277px;
+    height: 270px;
+    object-fit: contain;
+  }
+  cursor: pointer;
+}
+
+.product h3 {
+  font-weight: 400;
+  font-size: 17px;
+}
+
+.product .price {
+  display: flex;
+  justify-content: space-between;
+  color: #e94560;
+}
+
+.price button {
+  background: none;
+  color: #e94560;
+  font-size: 20px;
+  transition: 0.5s;
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
+  border: 1px solid rgb(3 0 71 /9%);
+}
+
+.price button:hover {
+  background: #e94560;
+  color: #fff;
+  cursor: pointer;
+}
